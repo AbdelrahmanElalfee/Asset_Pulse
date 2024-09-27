@@ -78,4 +78,15 @@ class User extends Authenticatable
             'user_id',
         );
     }
+
+    /**
+     * @return HasMany
+     */
+    public function peripherals(): HasMany
+    {
+        return $this->hasMany(
+            Peripheral::class,
+            'user_id',
+        );
+    }
 }

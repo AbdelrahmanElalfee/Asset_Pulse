@@ -6,7 +6,7 @@ use App\Filament\Resources\PeripheralResource\Pages;
 use App\Filament\Resources\PeripheralResource\RelationManagers;
 use App\Models\Peripheral;
 use App\Models\Provider;
-use App\Models\User;
+use Exception;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -21,6 +21,17 @@ class PeripheralResource extends Resource
     protected static ?string $model = Peripheral::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'Assets';
+
+    protected static ?string $recordTitleAttribute = 'model';
+
+    protected static ?int $navigationSort = 3;
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['provider.name', 'make', 'model'];
+    }
 
     public static function form(Form $form): Form
     {
@@ -45,6 +56,9 @@ class PeripheralResource extends Resource
             ]);
     }
 
+    /**
+     * @throws Exception
+     */
     public static function table(Table $table): Table
     {
         return $table
@@ -52,11 +66,10 @@ class PeripheralResource extends Resource
                 Tables\Columns\TextColumn::make('provider.name'),
                 Tables\Columns\TextColumn::make('make'),
                 Tables\Columns\TextColumn::make('model'),
-//                Tables\Columns\TextColumn::make('serial_number'),
                 Tables\Columns\TextColumn::make('type'),
                 Tables\Columns\TextColumn::make('status'),
                 Tables\Columns\TextColumn::make('user.name'),
-                Tables\Columns\TextColumn::make('purchase_date')->dateTime(),
+                Tables\Columns\TextColumn::make('purchase_date')->date(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('provider_id')
@@ -83,6 +96,9 @@ class PeripheralResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+            ])
+            ->emptyStateActions([
+                Tables\Actions\CreateAction::make(),
             ]);
     }
 
